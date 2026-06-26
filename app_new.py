@@ -1,36 +1,31 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
-import pickle
+import pickle as pkl
 
-st.title("Car Price Prediction App")
-df = pd.read_csv("final.csv")
-model = pickle.load(open("model.pkl", "rb"))
+st.title("Car Price Prediction Project")
+df = pd.read_csv("cleaned_data.csv")
+pipe = pkl.load(open("car-price-predictor.pkl", "rb"))
 
-companies = sorted(df['company'].unique())
-company = st.sidebar.selectbox("Select company", companies)
+companies = sorted(df["company"].unique())
+fuel_types = sorted(df["fuel_type"].unique())
 
-names = sorted(df[df['company'] == company]['name'].unique())
+company = st.selectbox("Select company", companies)
+names = sorted(df["name"][df["company"] == company].unique())
+name = st.selectbox("Select name", names)
+year = st.number_input("Enter year", min_value=1990, max_value=2025, value=2020, step=1)
+kms_driven = st.number_input("Enter kilometers driven", min_value=10000, value=50000, step=5000)
+fuel_type = st.selectbox("Select fuel type", fuel_types)
 
-name = st.sidebar.selectbox("Select name", names)
-year = st.sidebar.number_input("Enter year", min_value = 2000, max_value = 2026, step = 1)
-km_driven = st.sidebar.number_input("Enter km driven", value = 50000, min_value = 1000, max_value = 200000, step = 5000)
-fuel_type = st.sidebar.selectbox("Select fuel type", ["Petrol", "Diesel"])
-
-if st.sidebar.button("Predict Price"):
-    st.write("Predicting for")
-    st.write("Company: ", company)
-    st.write("Name: ", name)
-    st.write("Year: ", str(year))
-    st.write("KM Driven: ", str(km_driven))
-    st.write("Fuel Type: ", fuel_type)
+if st.button("Predict Price"):
+    st.write("Your company:", company)
+    st.write("Your name:", name)
+    st.write("Your year:", str(year))
+    st.write("Your kilometers driven:", str(kms_driven))
+    st.write("Your fuel type:", fuel_type)
 
     columns = ['company', 'name', 'year', 'kms_driven', 'fuel_type']
-    myinput = [[company, name, year, km_driven, fuel_type]]
-    myinput = pd.DataFrame(data = myinput, columns = columns)
-    #st.write(myinput)
-    result = model.predict(myinput)
-    if result[0,0] < 0:
-        st.error("Sorry, inputs are wrong.")
-    else:
-        st.success("Predicted Price:" + str(round(result[0,0])))
+    data = [[company, name, year, kms_driven, fuel_type]]
+    myinput = pd.DataFrame(data, columns=columns)
+    price = pipe.predict(myinput)
+
+    st.success("Predicted price: ₹" + str(round(price[0,0])))
