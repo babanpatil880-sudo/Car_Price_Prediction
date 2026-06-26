@@ -3,7 +3,7 @@ import pandas as pd
 import pickle as pkl
 
 st.title("Car Price Prediction Project")
-df = pd.read_csv("cleaned_data.csv")
+df = pd.read_csv("final.csv")
 pipe = pkl.load(open("car-price-predictor.pkl", "rb"))
 
 companies = sorted(df["company"].unique())
