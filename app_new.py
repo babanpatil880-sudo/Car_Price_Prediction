@@ -4,7 +4,7 @@ import pickle
 import os
 import joblib
 
-st.title("Car Price Prediction Project")
+st.title("PREDICT CAR PRICE BY RUGVED🚘")
 
 df = pd.read_csv("final.csv")
 
