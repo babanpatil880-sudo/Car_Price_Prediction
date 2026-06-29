@@ -2,24 +2,14 @@ import streamlit as st
 import pandas as pd
 import pickle
 import os
+import joblib
 
 st.title("Car Price Prediction Project")
 
 # Load dataset
 df = pd.read_csv("final.csv")
 
-# Check model file
-if not os.path.exists("model.pkl"):
-    st.error("model.pkl not found")
-    st.stop()
-
-# Load model safely
-try:
-    with open("model.pkl", "rb") as f:
-        pipe = pickle.load(f)
-except Exception as e:
-    st.error(f"Error loading model.pkl: {e}")
-    st.stop()
+model = joblib.load("linear_model.pkl")
 
 # Dropdowns
 companies = sorted(df["company"].unique())
